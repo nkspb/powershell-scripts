@@ -21,13 +21,18 @@ param (
     [switch] $ipEnabled
 )
 
+Write-Verbose "Start quering network adapters"
+
 if ($PSBoundParameters.keys -contains "dhcpEnabled" -and $PSBoundParameters.keys -contains "ipEnabled") {
-    write-host "WORKS"
-    Get-WmiObject -ComputerName $computerName -Class Win32_NetworkAdapterConfiguration -Filter "dhcpEnabled=$true and ipEnabled=$true"    
+    $filter = "dhcpEnabled=$true and ipEnabled=$true"    
 } elseif ($PSBoundParameters.keys -contains "ipEnabled") {
-    Get-WmiObject -ComputerName $computerName -Class Win32_NetworkAdapterConfiguration -Filter "ipEnabled=$true"    
+    $filter = "ipEnabled=$true"    
 } elseif ($PSBoundParameters.keys -contains "dhcpEnabled") {
-    Get-WmiObject -ComputerName $computerName -Class Win32_NetworkAdapterConfiguration -Filter "dhcpEnabled=$true"    
+    $filter = "dhcpEnabled=$true"    
 }  else {
-    Get-WmiObject -ComputerName $computerName -Class Win32_NetworkAdapterConfiguration
+    $filter = ""
 }
+
+Get-WmiObject -ComputerName $computerName -Class Win32_NetworkAdapterConfiguration -Filter $filter
+
+Write-Verbose "Finished quering network adapters"
